@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import { OpenAI } from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const openai = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_API_KEY,
-  dangerouslyAllowBrowser: true,
-});
+const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
 
 const useTranslate = (sourceText, selectedLanguage) => {
   const [targetText, setTargetText] = useState("");
@@ -12,21 +9,17 @@ const useTranslate = (sourceText, selectedLanguage) => {
   useEffect(() => {
     const handleTranslate = async (sourceText) => {
       try {
-        const response = await openai.chat.completions.create({
-          model: "gpt-4o",
-          messages: [
-            {
-              role: "user",
-              content: `You will be provided with a sentence. This sentence: 
-              ${sourceText}. Your tasks are to:
-              - Detect what language the sentence is in
-              - Translate the sentence into ${selectedLanguage}
-              Do not return anything other than the translated sentence.`,
-            },
-          ],
-        });
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-        const data = response.choices[0].message.content;
+        const response = await model.generateContent(
+          `Translate the following text into ${selectedLanguage}:
+          
+          "${sourceText}"
+          
+          Only return the translated text, no additional comments.`
+        );
+
+        const data = response.response.text();
         setTargetText(data);
       } catch (error) {
         console.error("Error translating text:", error);

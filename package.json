@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.24.7",
+    "@google/generative-ai": "^0.21.0",
     "@tabler/icons-react": "^3.11.0",
     "@types/react-speech-recognition": "^3.9.5",
     "clsx": "^2.1.1",
